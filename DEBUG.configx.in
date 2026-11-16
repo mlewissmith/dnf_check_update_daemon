@@ -1,0 +1,68 @@
+================================================================================
+                EXAMPLE CONFIGURATION EXPANSION
+================================================================================
+
+PROJECT_NAME        '@PROJECT_NAME@'
+PROJECT_VERSION     '@PROJECT_VERSION@'
+
+PACKAGE_NAME        '@PACKAGE_NAME@'
+PACKAGE_VERSION     '@PACKAGE_VERSION@'
+PACKAGE_BUGREPORT   '@PACKAGE_BUGREPORT@'
+PACKAGE_URL         '@PACKAGE_URL@'
+PACKAGE_TARNAME     '@PACKAGE_TARNAME@'
+PACKAGE_STRING      '@PACKAGE_STRING@'
+PACKAGE_VARNAME     '@PACKAGE_VARNAME@'
+PACKAGE_SUMMARY     '@PACKAGE_SUMMARY@'
+PACKAGE_DESCRIPTION
+@PACKAGE_DESCRIPTION@
+
+NAME                '@NAME@'
+VERSION             '@VERSION@'
+PACKAGE             '@PACKAGE@'
+
+
+--------------------------------------------------------------------------------
+		Directories: meson standard
+--------------------------------------------------------------------------------
+
+bindir         '@bindir@'
+datadir        '@datadir@'
+includedir     '@includedir@'
+infodir        '@infodir@'
+libdir         '@libdir@'
+libexecdir     '@libexecdir@'
+localedir      '@localedir@'
+localstatedir  '@localstatedir@'
+mandir         '@mandir@'
+prefix         '@prefix@'
+sbindir        '@sbindir@'
+sharedstatedir '@sharedstatedir@'
+sysconfdir     '@sysconfdir@'
+
+
+--------------------------------------------------------------------------------
+		Directories: autoconf compatibility
+--------------------------------------------------------------------------------
+
+datarootdir       '@datarootdir@'
+docdir            '@docdir@'
+dvidir            '@dvidir@'
+exec_prefix       '@exec_prefix@'
+htmldir           '@htmldir@'
+oldincludedir     '@oldincludedir@'
+pdfdir            '@pdfdir@'
+psdir             '@psdir@'
+runstatedir       '@runstatedir@'
+pkgdatadir        '@pkgdatadir@'
+pkgincludedir     '@pkgincludedir@'
+pkglibdir         '@pkglibdir@'
+pkglibexecdir     '@pkglibexecdir@'
+pkglocalstatedir  '@pkglocalstatedir@'
+pkgsharedstatedir '@pkgsharedstatedir@'
+
+--------------------------------------------------------------------------------
+                OUR OPTIONS
+--------------------------------------------------------------------------------
+
+rpmdb_file       '@rpmdb_file@'
+dnf_updates_file '@dnf_updates_file@'

@@ -1,0 +1,14 @@
+#!/bin/bash
+set -uex
+
+me=$(realpath $0)
+myname=$(basename ${me})
+mydir=$(dirname ${me})
+
+rpmdb_sqlite="@rpmdb_file@"
+dnf_updates="@dnf_updates_file@"
+
+while inotifywait -e modify "${rpmdb_sqlite}"
+do
+    dnf --quiet --cacheonly check-update | tee "${dnf_updates}"
+done

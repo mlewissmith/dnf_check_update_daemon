@@ -1,0 +1,34 @@
+## -*- meson -*-
+## https://mesonbuild.com/Build-options.html
+
+################################################################################
+## package-specific options
+## type: {string,boolean,combo,integer,feature} CAN expanded
+## by 'configuration_data()'
+# option('opt_str',   type: 'string')
+# option('opt_bool',  type: 'boolean')
+# option('opt_combo', type: 'combo', choices: ['combo1', 'combo2'])
+# option('opt_int',   type: 'integer')
+# option('opt_feat',  type: 'feature')
+# ## type: 'array' CAN NOT be expanded by 'configuration_data()'
+# ## without preprocessing
+# option('opt_ary',      type: 'array')
+# option('opt_arycombo', type: 'array', choices: ['arycombo1', 'arycombo2'])
+
+option('rpmdb_file',       type: 'string', description: 'file to watch')
+option('dnf_updates_file', type: 'string', description: 'file to write')
+
+################################################################################
+## NO USER SERVICABLE PARTS BELOW
+
+## autotools compatibility
+option('PACKAGE_NAME',        type:'string', description:'Free text; default: project_name')
+option('PACKAGE_VERSION',     type:'string', description:'Version string; default: project_version')
+option('PACKAGE_BUGREPORT',   type:'string', description:'Contact email/url')
+option('PACKAGE_URL',         type:'string', description:'Source url')
+option('PACKAGE_TARNAME',     type:'string', description:'File/dir basename; default: sanitized PACKAGE_NAME')
+option('PACKAGE_STRING',      type:'string', description:'Free text; default: "PACKAGE_NAME PACKAGE_VERSION"')
+## extensions
+option('PACKAGE_VARNAME',     type:'string', description:'Variable name; default: sanitized PACKAGE_NAME')
+option('PACKAGE_SUMMARY',     type:'string', description:'Oneline string')
+option('PACKAGE_DESCRIPTION', type:'string', description:'Multiline description')

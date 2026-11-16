@@ -1,0 +1,7 @@
+## -*- conf -*-
+[Unit]
+Description=Watch '@rpmdb_file@' for changes
+
+[Service]
+Type=simple
+ExecStart=@pkglibexecdir@/daemon.sh
