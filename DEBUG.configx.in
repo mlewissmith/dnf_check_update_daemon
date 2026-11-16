@@ -64,5 +64,7 @@ pkgsharedstatedir '@pkgsharedstatedir@'
                 OUR OPTIONS
 --------------------------------------------------------------------------------
 
-rpmdb_file       '@rpmdb_file@'
-dnf_updates_file '@dnf_updates_file@'
+systemd_unitdir   '@systemd_unitdir@'
+systemd_presetdir '@systemd_presetdir@'
+rpmdb_file        '@rpmdb_file@'
+dnf_updates_file  '@dnf_updates_file@'

@@ -28,14 +28,14 @@ PACKAGE_NAME        = get_option('PACKAGE_NAME')==''        ? PROJECT_NAME      
 PACKAGE_VERSION     = get_option('PACKAGE_VERSION')==''     ? PROJECT_VERSION              : get_option('PACKAGE_VERSION')
 PACKAGE_BUGREPORT   = get_option('PACKAGE_BUGREPORT')==''   ? _package_bugreport           : get_option('PACKAGE_BUGREPORT')
 PACKAGE_URL         = get_option('PACKAGE_URL')==''         ? _package_url                 : get_option('PACKAGE_URL')
-_package_tarname    = PACKAGE_NAME.to_lower().underscorify().replace('_','-')
+_package_tarname    = PACKAGE_NAME.to_lower().underscorify()
 PACKAGE_TARNAME     = get_option('PACKAGE_TARNAME')==''     ? _package_tarname             : get_option('PACKAGE_TARNAME')
 _package_string     = PACKAGE_NAME+' '+PACKAGE_VERSION
 PACKAGE_STRING      = get_option('PACKAGE_STRING')==''      ? _package_string              : get_option('PACKAGE_STRING')
 ## extensions
 PACKAGE_SUMMARY     = get_option('PACKAGE_SUMMARY')==''     ? _package_summary             : get_option('PACKAGE_SUMMARY')
 PACKAGE_DESCRIPTION = get_option('PACKAGE_DESCRIPTION')=='' ? _package_description.strip() : get_option('PACKAGE_DESCRIPTION').strip()
-_package_varname    = PACKAGE_NAME.underscorify()
+_package_varname    = PACKAGE_NAME.to_upper().underscorify()
 PACKAGE_VARNAME     = get_option('PACKAGE_VARNAME')==''     ? _package_varname             : get_option('PACKAGE_VARNAME')
 ## aliases
 NAME    = PACKAGE_NAME
@@ -153,10 +153,14 @@ summary({'datarootdir'       : configx.get('datarootdir'),
 
 ################################################################################
 
-configx.set('rpmdb_file', get_option('rpmdb_file'))
-configx.set('dnf_updates_file', get_option('dnf_updates_file'))
+configx.set('systemd_unitdir',   get_option('systemd_unitdir'))
+configx.set('systemd_presetdir', get_option('systemd_presetdir'))
+configx.set('rpmdb_file',        get_option('rpmdb_file'))
+configx.set('dnf_updates_file',  get_option('dnf_updates_file'))
 
-summary({'rpmdb_file'       : configx.get('rpmdb_file'),
+summary({'systemd_unitdir'  : configx.get('systemd_unitdir'),
+         'systemd_presetdir': configx.get('systemd_presetdir'),
+         'rpmdb_file'       : configx.get('rpmdb_file'),
          'dnf_updates_file' : configx.get('dnf_updates_file')},
         section: 'Options')
 

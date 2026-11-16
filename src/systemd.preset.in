@@ -1,0 +1,2 @@
+## -*- conf -*-
+enable @PACKAGE_NAME@.service

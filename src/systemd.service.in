@@ -1,7 +1,13 @@
 ## -*- conf -*-
 [Unit]
 Description=Watch '@rpmdb_file@' for changes
+ConditionPathExists=@rpmdb_file@
+After=local-fs.target
+After=network-online.target
 
 [Service]
 Type=simple
 ExecStart=@pkglibexecdir@/daemon.sh
+
+[Install]
+WantedBy=multi-user.target
