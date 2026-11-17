@@ -1,4 +1,4 @@
 ## -*- mode: bash -*-
 [[ $- == *i* ]] || return
-[[ -e "@dnf_updates_file@" ]] || return
-awk '{print $1}' "@dnf_updates_file@"
+[[ -e "@updates_txt@" ]] || return
+awk '{print $1}' "@updates_txt@"

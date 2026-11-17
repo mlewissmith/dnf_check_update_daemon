@@ -22,7 +22,7 @@ PACKAGE             '@PACKAGE@'
 
 
 --------------------------------------------------------------------------------
-		Directories: meson standard
+                Directories: meson standard
 --------------------------------------------------------------------------------
 
 bindir         '@bindir@'
@@ -41,7 +41,7 @@ sysconfdir     '@sysconfdir@'
 
 
 --------------------------------------------------------------------------------
-		Directories: autoconf compatibility
+                Directories: autoconf compatibility
 --------------------------------------------------------------------------------
 
 datarootdir       '@datarootdir@'
@@ -66,5 +66,5 @@ pkgsharedstatedir '@pkgsharedstatedir@'
 
 systemd_unitdir   '@systemd_unitdir@'
 systemd_presetdir '@systemd_presetdir@'
-rpmdb_file        '@rpmdb_file@'
-dnf_updates_file  '@dnf_updates_file@'
+packages_db       '@packages_db@'
+updates_txt       '@updates_txt@'

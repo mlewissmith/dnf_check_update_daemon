@@ -1,7 +1,7 @@
 ## -*- conf -*-
 [Unit]
-Description=Watch '@rpmdb_file@' for changes
-ConditionPathExists=@rpmdb_file@
+Description=Watch '@packages_db@' for changes
+ConditionPathExists=@packages_db@
 After=local-fs.target
 After=network-online.target
 

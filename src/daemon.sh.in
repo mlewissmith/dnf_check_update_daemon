@@ -1,21 +1,14 @@
 #!/bin/bash
 set -ue
 
-me=$(realpath $0)
-myname=$(basename ${me})
-mydir=$(dirname ${me})
-
-rpmdb_sqlite="@rpmdb_file@"
-dnf_updates="@dnf_updates_file@"
-
-function dnf_check() {
-    dnf --quiet --cacheonly check-update > "${dnf_updates}"
-}
+packages_db="@packages_db@"
+updates_txt="@updates_txt@"
 
 trap ">${dnf_updates}" EXIT
-dnf_check ||:
+
 while
+    dnf --quiet --cacheonly check-update > "${dnf_updates}" ||:
     inotifywait -qq -e close_write "${rpmdb_sqlite}"
 do
-    dnf_check ||:
+    :
 done

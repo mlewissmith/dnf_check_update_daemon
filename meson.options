@@ -15,8 +15,8 @@
 # option('opt_ary',      type: 'array')
 # option('opt_arycombo', type: 'array', choices: ['arycombo1', 'arycombo2'])
 
-option('rpmdb_file',        type: 'string', description: 'file to watch')
-option('dnf_updates_file',  type: 'string', description: 'file to write')
+option('packages_db',       type: 'string', description: 'file to watch')
+option('updates_txt',       type: 'string', description: 'file to write')
 option('systemd_unitdir',   type: 'string', value: '/etc/systemd/system')
 option('systemd_presetdir', type: 'string', value: '/etc/systemd/system-preset')
 
