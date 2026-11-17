@@ -4,10 +4,10 @@ set -ue
 packages_db="@packages_db@"
 updates_txt="@updates_txt@"
 
-trap ">${dnf_updates}" EXIT
+trap ">${updates_txt}" EXIT
 
 while
-    dnf --quiet --cacheonly check-update > "${dnf_updates}" ||:
+    dnf --quiet --cacheonly check-update > "${updates_txt}" ||:
     inotifywait -qq -e close_write "${rpmdb_sqlite}"
 do
     :
