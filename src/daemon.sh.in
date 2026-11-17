@@ -8,7 +8,7 @@ trap ">${updates_txt}" EXIT
 
 while
     dnf --quiet --cacheonly check-update > "${updates_txt}" ||:
-    inotifywait -qq -e close_write "${rpmdb_sqlite}"
+    inotifywait -qq -e close_write "${packages_db}"
 do
     :
 done
