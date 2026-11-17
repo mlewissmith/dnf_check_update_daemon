@@ -14,7 +14,8 @@ function dnf_check() {
 
 trap ">${dnf_updates}" EXIT
 dnf_check ||:
-while inotifywait -e modify "${rpmdb_sqlite}"
+while
+    inotifywait -qq -e close_write "${rpmdb_sqlite}"
 do
     dnf_check ||:
 done
