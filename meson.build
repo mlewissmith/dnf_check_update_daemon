@@ -6,7 +6,8 @@ project(
   default_options: [
     ## define options in file 'meson.options'
     ## expand options in 'configx' below
-    'rpmdb_file=/var/lib/rpm/rpmdb.sqlite',
+    #'rpmdb_file=/var/lib/rpm/rpmdb.sqlite',
+    'rpmdb_file=/var/cache/dnf/packages.db',
     'dnf_updates_file=/tmp/.dnf_updates',
   ],
 )
