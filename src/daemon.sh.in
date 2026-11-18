@@ -4,7 +4,7 @@ set -ue
 packages_db="@packages_db@"
 updates_txt="@updates_txt@"
 
-trap ">${updates_txt}" EXIT
+trap "rm ${updates_txt}" EXIT
 
 function list_unique_updates() {
     dnf --quiet --cacheonly check-update | awk 'NF{print $1}' | sort -u
