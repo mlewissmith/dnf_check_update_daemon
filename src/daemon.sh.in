@@ -6,9 +6,12 @@ updates_txt="@updates_txt@"
 
 trap ">${updates_txt}" EXIT
 
-while
-    dnf --quiet --cacheonly check-update > "${updates_txt}" ||:
-    inotifywait -qq -e close_write "${packages_db}"
+function list_unique_updates() {
+    dnf --quiet --cacheonly check-update | awk 'NF{print $1}' | sort -u
+}
+
+while true
 do
-    :
+    list_unique_updates > "${updates_txt}"
+    inotifywait -qq -e close_write "${packages_db}"
 done

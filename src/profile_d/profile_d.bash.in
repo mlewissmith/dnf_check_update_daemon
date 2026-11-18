@@ -1,4 +1,7 @@
 ## -*- mode: bash -*-
 [[ $- == *i* ]] || return
-[[ -e "@updates_txt@" ]] || return
-awk '{print $1}' "@updates_txt@"
+if [[ -e "@updates_txt@" ]]
+then
+    cat "@updates_txt@"
+    export @PACKAGE_VARNAME@_TXT="@updates_txt@"
+fi
