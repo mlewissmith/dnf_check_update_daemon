@@ -7,7 +7,7 @@ configure_file(
   configuration : configx,
   install       : true,
   install_dir   : configx.get('pkglibexecdir'),
-  install_mode  : 'rwx------',
+  install_mode  : 'rwxr--r--',
 )
 
 if get_option('with-systemd')
