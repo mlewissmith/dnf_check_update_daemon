@@ -2,7 +2,7 @@
 
 project(
   'dnf_notify_update',
-  version: 'alpha',
+  version: '0.1.beta',
   default_options: [
     ## define options in file 'meson.options'
     ## expand options in 'configx' below
