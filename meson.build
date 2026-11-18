@@ -163,11 +163,20 @@ _updates_txt = configx.get('runstatedir')/PACKAGE+'.txt'
 configx.set('updates_txt',
             get_option('updates_txt')=='' ? _updates_txt : get_option('updates_txt'))
 
-summary({'systemd_unitdir'  : configx.get('systemd_unitdir'),
-         'systemd_presetdir': configx.get('systemd_presetdir'),
-         'packages_db'      : configx.get('packages_db'),
-         'updates_txt'      : configx.get('updates_txt')},
-        section: 'Options')
+configx.set('with-systemd', get_option('with-systemd'))
+configx.set('with-profile_d', get_option('with-profile_d'))
+
+summary(
+  {
+    'systemd_unitdir'  : configx.get('systemd_unitdir'),
+    'systemd_presetdir': configx.get('systemd_presetdir'),
+    'packages_db'      : configx.get('packages_db'),
+    'updates_txt'      : configx.get('updates_txt'),
+    'with-systemd'     : configx.get('with-systemd'),
+    'with-profile_d'   : configx.get('with-profile_d'),
+  },
+  section: 'Options'
+)
 
 configure_file(
   input         : 'DEBUG.configx.in',
