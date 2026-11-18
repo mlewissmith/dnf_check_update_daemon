@@ -27,7 +27,7 @@ PACKAGE_NAME        = get_option('PACKAGE_NAME')==''        ? PROJECT_NAME      
 PACKAGE_VERSION     = get_option('PACKAGE_VERSION')==''     ? PROJECT_VERSION              : get_option('PACKAGE_VERSION')
 PACKAGE_BUGREPORT   = get_option('PACKAGE_BUGREPORT')==''   ? _package_bugreport           : get_option('PACKAGE_BUGREPORT')
 PACKAGE_URL         = get_option('PACKAGE_URL')==''         ? _package_url                 : get_option('PACKAGE_URL')
-_package_tarname    = PACKAGE_NAME.to_lower().underscorify()
+_package_tarname    = PACKAGE_NAME.to_lower()
 PACKAGE_TARNAME     = get_option('PACKAGE_TARNAME')==''     ? _package_tarname             : get_option('PACKAGE_TARNAME')
 _package_string     = PACKAGE_NAME+' '+PACKAGE_VERSION
 PACKAGE_STRING      = get_option('PACKAGE_STRING')==''      ? _package_string              : get_option('PACKAGE_STRING')
