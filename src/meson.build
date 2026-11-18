@@ -14,26 +14,31 @@ configure_file(
   install_mode  : 'rwx------',
 )
 
-configure_file(
-  input         : 'systemd.service.in',
-  output        : configx.get('PACKAGE_NAME') + '.service',
-  configuration : configx,
-  install       : true,
-  install_dir   : configx.get('systemd_unitdir'),
-)
+if get_option('with-systemd')
+  subdir('systemd')
+  # configure_file(
+  #   input         : 'systemd.service.in',
+  #   output        : configx.get('PACKAGE_NAME') + '.service',
+  #   configuration : configx,
+  #   install       : true,
+  #   install_dir   : configx.get('systemd_unitdir'),
+  # )
+  # configure_file(
+  #   input         : 'systemd.preset.in',
+  #   output        : '95-' + configx.get('PACKAGE_NAME') + '.preset',
+  #   configuration : configx,
+  #   install       : true,
+  #   install_dir   : configx.get('systemd_presetdir'),
+  # )
+endif
 
-configure_file(
-  input         : 'systemd.preset.in',
-  output        : '95-' + configx.get('PACKAGE_NAME') + '.preset',
-  configuration : configx,
-  install       : true,
-  install_dir   : configx.get('systemd_presetdir'),
-)
-
-configure_file(
-  input         : 'profile.bash.in',
-  output        : configx.get('PACKAGE_NAME')+'.sh',
-  configuration : configx,
-  install       : true,
-  install_dir   : configx.get('sysconfdir')/'profile.d',
-)
+if get_option('with-profile_d')
+  subdir('profile.d')
+  # configure_file(
+  #   input         : 'profile.bash.in',
+  #   output        : configx.get('PACKAGE_NAME')+'.sh',
+  #   configuration : configx,
+  #   install       : true,
+  #   install_dir   : configx.get('sysconfdir')/'profile.d',
+  # )
+endif
