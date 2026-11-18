@@ -6,13 +6,11 @@ project(
   default_options: [
     ## define options in file 'meson.options'
     ## expand options in 'configx' below
-    #'packages_db=/var/lib/rpm/rpmdb.sqlite',
-    'packages_db=/var/cache/dnf/packages.db',
-    'updates_txt=/tmp/.dnf_updates',
+    #'packages_db=/var/cache/dnf/packages.db',
   ],
 )
 
-_package_bugreport   = 'mlewissmith@users.noreply.github.com'
+_package_bugreport   = 'https://github.com/mlewissmith/dnf_notify_update/issues'
 _package_url         = 'https://github.com/mlewissmith/dnf_notify_update'
 _package_summary     = 'Notify users of available package updates'
 _package_description = '''
@@ -156,13 +154,19 @@ summary({'datarootdir'       : configx.get('datarootdir'),
 
 configx.set('systemd_unitdir',   get_option('systemd_unitdir'))
 configx.set('systemd_presetdir', get_option('systemd_presetdir'))
-configx.set('packages_db',        get_option('packages_db'))
-configx.set('updates_txt',  get_option('updates_txt'))
+
+_packages_db = '/var/cache/dnf/packages.db'
+configx.set('packages_db',
+            get_option('packages_db')=='' ? _packages_db : get_option('packages_db'))
+
+_updates_txt = configx.get('runstatedir')/PACKAGE+'.txt'
+configx.set('updates_txt',
+            get_option('updates_txt')=='' ? _updates_txt : get_option('updates_txt'))
 
 summary({'systemd_unitdir'  : configx.get('systemd_unitdir'),
          'systemd_presetdir': configx.get('systemd_presetdir'),
-         'packages_db'       : configx.get('packages_db'),
-         'updates_txt' : configx.get('updates_txt')},
+         'packages_db'      : configx.get('packages_db'),
+         'updates_txt'      : configx.get('updates_txt')},
         section: 'Options')
 
 configure_file(
