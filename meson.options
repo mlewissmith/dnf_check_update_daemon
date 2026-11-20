@@ -20,7 +20,8 @@ option('updates_txt',       type: 'string')
 option('systemd_unitdir',   type: 'string', value: '/etc/systemd/system')
 option('systemd_presetdir', type: 'string', value: '/etc/systemd/system-preset')
 option('with-systemd',      type: 'boolean', value: true, description: 'install systemd service')
-option('with-profile_d',    type: 'boolean', value: true, description: 'install profile.d scriptlets' )
+option('with-profile_d',    type: 'boolean', value: true, description: 'install profile.d scriptlets')
+option('with-user',         type: 'boolean', value: true, description: 'install user executable')
 
 ################################################################################
 ## NO USER SERVICABLE PARTS BELOW
