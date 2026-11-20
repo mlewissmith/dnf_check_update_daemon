@@ -1,10 +1,16 @@
 #!/bin/bash
 set -ue
 
+me="$(realpath $0)"
+myname="$(basename ${me})"
+mydir="$(dirname ${me})"
+mypid="$$"
+
+piddir="${XDG_RUNTIME_DIR}/@NAME@"
+pidfile="${piddir}/${DISPLAY}"
+
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
-me=$(realpath $0)
-myname=$(basename ${me})
-mydir=$(dirname ${me})
+
 
 function _debug() {
     cat<<__EOF_DEBUG__
@@ -84,28 +90,58 @@ with-user               '@with-user@'
 __EOF_DEBUG__
 }
 
+function _write_pidfile() {
+    mkdir -vp ${piddir}
+    ps -p ${mypid} -opid= -oargs= > ${pidfile}
+}
+
+function _read_pidfile() {
+    if [[ -e ${pidfile} ]]
+    then
+        local _pid _args
+        read _pid _args < ${pidfile}
+        if [[ $(ps -p ${_pid} -oargs=) == ${_args} ]]
+        then echo ${_pid}
+        else rm -v ${pidfile} >&2
+        fi
+    fi
+}
+
 function _status() {
-    echo "User script '${myname}' is running with pid [PID]"
-    echo "monitoring '${updates_txt}' for changes"
+    local _pid=$(_read_pidfile)
+    if [[ -z ${_pid} ]]
+    then
+        echo "User script '${myname}' is not running"
+    else
+        echo "User script '${myname}' is running with pid [${_pid}]"
+        echo "Monitoring '${updates_txt}' for changes"
+    fi
     [[ -s "${updates_txt}" ]] && echo "Updates are available"
 }
 
+function _start() {
+    if [[ -z $(_read_pidfile) ]]
+    then
+        _write_pidfile
+        trap "rm -v ${pidfile}; pkill -P ${mypid}" EXIT
+        while true
+        do
+            inotifywait -e close_write ${updates_txt}
+            cat ${updates_txt}
+        done
+    fi
+}
+
+function _stop() {
+    local _pid=$(_read_pidfile)
+    [[ -n ${_pid} ]] && kill ${_pid}
+}
+
 case ${1:-status} in
-    start)
-        echo START
-    ;;
-    stop)
-        echo STOP
-    ;;
+    start) _start ;;
+    stop) _stop ;;
     status) _status ;;
-    help)
-        echo HELP
-        ;;
-    _debug)
-        _debug
-        ;;
-    *)
-        echo "ERROR '$1'"
-        exit 1
-        ;;
+    help) echo HELP ;;
+    _debug) _debug ;;
+    *) echo "ERROR '$1'" ; exit 1 ;;
 esac
