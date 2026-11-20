@@ -1,0 +1,148 @@
+#!/bin/bash
+set -ue
+
+me="$(realpath $0)"
+myname="$(basename ${me})"
+mydir="$(dirname ${me})"
+mypid="$$"
+
+piddir="${XDG_RUNTIME_DIR}/@NAME@"
+pidfile="${piddir}/${DISPLAY}"
+
+updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
+
+
+function _debug() {
+    cat<<__EOF_DEBUG__
+================================================================================
+        EXAMPLE CONFIGURATION EXPANSION
+================================================================================
+
+PROJECT_NAME            '@PROJECT_NAME@'
+PROJECT_VERSION         '@PROJECT_VERSION@'
+
+PACKAGE_NAME            '@PACKAGE_NAME@'
+PACKAGE_VERSION         '@PACKAGE_VERSION@'
+PACKAGE_BUGREPORT       '@PACKAGE_BUGREPORT@'
+PACKAGE_URL             '@PACKAGE_URL@'
+PACKAGE_TARNAME         '@PACKAGE_TARNAME@'
+PACKAGE_STRING          '@PACKAGE_STRING@'
+PACKAGE_VARNAME         '@PACKAGE_VARNAME@'
+PACKAGE_SUMMARY         '@PACKAGE_SUMMARY@'
+PACKAGE_DESCRIPTION
+@PACKAGE_DESCRIPTION@
+
+NAME                    '@NAME@'
+VERSION                 '@VERSION@'
+PACKAGE                 '@PACKAGE@'
+
+
+--------------------------------------------------------------------------------
+        Directories: meson standard
+--------------------------------------------------------------------------------
+
+bindir                  '@bindir@'
+datadir                 '@datadir@'
+includedir              '@includedir@'
+infodir                 '@infodir@'
+libdir                  '@libdir@'
+libexecdir              '@libexecdir@'
+localedir               '@localedir@'
+localstatedir           '@localstatedir@'
+mandir                  '@mandir@'
+prefix                  '@prefix@'
+sbindir                 '@sbindir@'
+sharedstatedir          '@sharedstatedir@'
+sysconfdir              '@sysconfdir@'
+
+
+--------------------------------------------------------------------------------
+        Directories: autoconf compatibility
+--------------------------------------------------------------------------------
+
+datarootdir             '@datarootdir@'
+docdir                  '@docdir@'
+dvidir                  '@dvidir@'
+exec_prefix             '@exec_prefix@'
+htmldir                 '@htmldir@'
+oldincludedir           '@oldincludedir@'
+pdfdir                  '@pdfdir@'
+psdir                   '@psdir@'
+runstatedir             '@runstatedir@'
+pkgdatadir              '@pkgdatadir@'
+pkgincludedir           '@pkgincludedir@'
+pkglibdir               '@pkglibdir@'
+pkglibexecdir           '@pkglibexecdir@'
+pkglocalstatedir        '@pkglocalstatedir@'
+pkgsharedstatedir       '@pkgsharedstatedir@'
+
+--------------------------------------------------------------------------------
+        OUR OPTIONS
+--------------------------------------------------------------------------------
+
+packages_db             '@packages_db@'
+updates_txt             '@updates_txt@'
+systemd_unitdir         '@systemd_unitdir@'
+systemd_presetdir       '@systemd_presetdir@'
+with-systemd            '@with-systemd@'
+with-profile_d          '@with-profile_d@'
+with-user               '@with-user@'
+__EOF_DEBUG__
+}
+
+function _write_pidfile() {
+    mkdir -vp ${piddir}
+    ps -p ${mypid} -opid= -oargs= > ${pidfile}
+}
+
+function _read_pidfile() {
+    if [[ -e ${pidfile} ]]
+    then
+        local _pid _args
+        read _pid _args < ${pidfile}
+        if [[ $(ps -p ${_pid} -oargs=) == ${_args} ]]
+        then echo ${_pid}
+        else rm -v ${pidfile} >&2
+        fi
+    fi
+}
+
+function _status() {
+    local _pid=$(_read_pidfile)
+    if [[ -z ${_pid} ]]
+    then
+        echo "User script '${myname}' is not running"
+    else
+        echo "User script '${myname}' is running with pid [${_pid}]"
+        echo "Monitoring '${updates_txt}' for changes"
+    fi
+    [[ -s "${updates_txt}" ]] && echo "Updates are available"
+}
+
+function _start() {
+    if [[ -z $(_read_pidfile) ]]
+    then
+        _write_pidfile
+        trap "rm -v ${pidfile}; pkill -P ${mypid}" EXIT
+        while true
+        do
+            inotifywait -qq -e close_write ${updates_txt}
+            #cat ${updates_txt}
+            notify-send -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
+        done
+    fi
+}
+
+function _stop() {
+    local _pid=$(_read_pidfile)
+    [[ -n ${_pid} ]] && kill ${_pid}
+}
+
+case ${1:-status} in
+    start) _start ;;
+    stop) _stop ;;
+    status) _status ;;
+    help) echo HELP ;;
+    _debug) _debug ;;
+    *) echo "ERROR '$1'" ; exit 1 ;;
+esac

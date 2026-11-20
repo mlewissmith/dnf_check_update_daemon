@@ -17,3 +17,7 @@ endif
 if get_option('with-profile_d')
   subdir('profile_d')
 endif
+
+if get_option('with-user')
+  subdir('user')
+endif
