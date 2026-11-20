@@ -7,4 +7,5 @@ configure_file(
   configuration : configx,
   install       : true,
   install_dir   : configx.get('bindir'),
+  install_mode  : 'rwxr-xr-x',
 )
