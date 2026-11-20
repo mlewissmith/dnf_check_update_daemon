@@ -2,6 +2,9 @@
 set -ue
 
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
+me=$(realpath $0)
+myname=$(basename ${me})
+mydir=$(dirname ${me})
 
 function _debug() {
     cat<<__EOF_DEBUG__
@@ -81,6 +84,11 @@ with-user               '@with-user@'
 __EOF_DEBUG__
 }
 
+function _status() {
+    echo "User script '${myname}' is running with pid [PID]"
+    echo "monitoring '${updates_txt}' for changes"
+    [[ -s "${updates_txt}" ]] && echo "Updates are available"
+}
 
 case ${1:-status} in
     start)
@@ -89,9 +97,7 @@ case ${1:-status} in
     stop)
         echo STOP
     ;;
-    status)
-        echo STATUS
-        ;;
+    status) _status ;;
     help)
         echo HELP
         ;;
