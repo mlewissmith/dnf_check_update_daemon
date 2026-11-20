@@ -10,7 +10,9 @@ __inotifywait=$(which inotifywait)
 trap "rm ${updates_txt}" EXIT
 
 function list_unique_updates() {
-    ${__dnf} --quiet --cacheonly check-update | awk 'NF{print $1}' | sort -u
+    ${__dnf} --quiet --cacheonly check-update     |
+        awk '/^[[:space:]]/ {next}; NF {print $1}' |
+        sort -u
 }
 
 while true
