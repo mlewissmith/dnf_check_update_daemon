@@ -1,8 +1,8 @@
 ## -*- meson -*-
 
 project(
-  'dnf_notify_update',
-  version: '0.1.beta',
+  'dnf_check_update_daemon',
+  version: '0.2.beta',
   default_options: [
     ## define options in file 'meson.options'
     ## expand options in 'configx' below
@@ -10,8 +10,8 @@ project(
   ],
 )
 
-_package_bugreport   = 'https://github.com/mlewissmith/dnf_notify_update/issues'
-_package_url         = 'https://github.com/mlewissmith/dnf_notify_update'
+_package_bugreport   = 'https://github.com/mlewissmith/dnf_check_update_daemon/issues'
+_package_url         = 'https://github.com/mlewissmith/dnf_check_update_daemon'
 _package_summary     = 'Notify users of available package updates'
 _package_description = '''
 [DESCRIPTION]
