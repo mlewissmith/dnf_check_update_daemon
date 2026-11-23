@@ -114,21 +114,25 @@ function _status() {
         echo "User script '${myname}' is not running"
     else
         echo "User script '${myname}' is running with pid [${_pid}]"
+        echo "pidfile: '${pidfile}'"
         echo "Monitoring '${updates_txt}' for changes"
     fi
-    [[ -s "${updates_txt}" ]] && echo "Updates are available"
+    if [[ -s "${updates_txt}" ]]
+    then
+        echo "Updates available:"
+        cat "${updates_txt}"
+    fi
 }
 
 function _start() {
     if [[ -z $(_read_pidfile) ]]
     then
         _write_pidfile
-        trap "rm -v ${pidfile}; pkill -P ${mypid}" EXIT
+        trap "rm ${pidfile}; pkill -P ${mypid}" EXIT
         while true
         do
+            [[ -s "${updates_txt}" ]] && notify-send -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
             inotifywait -qq -e close_write ${updates_txt}
-            #cat ${updates_txt}
-            notify-send -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
         done
     fi
 }
