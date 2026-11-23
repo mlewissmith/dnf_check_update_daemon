@@ -15,7 +15,8 @@ __notify_send=$(which notify-send)
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
 
 function notify_user() {
-    if [[ -s "${updates_txt}" ]]
+    if
+        [[ -s "${updates_txt}" ]]
     then
         ${__notify_send} -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
     fi
@@ -28,20 +29,25 @@ function _write_pidfile() {
 }
 
 function _read_pidfile() {
-    if [[ -e ${pidfile} ]]
+    if
+        [[ -e ${pidfile} ]]
     then
         local _pid _args
         read _pid _args < ${pidfile}
-        if [[ $(ps -p ${_pid} -oargs=) == ${_args} ]]
-        then echo ${_pid}
-        else rm ${pidfile} >&2
+        if
+            [[ $(ps -p ${_pid} -oargs=) == ${_args} ]]
+        then
+            echo ${_pid}
+        else
+            rm ${pidfile} >&2
         fi
     fi
 }
 
 function _status() {
     local _pid=$(_read_pidfile)
-    if [[ -z ${_pid} ]]
+    if
+        [[ -z ${_pid} ]]
     then
         echo "User script '${myname}' is not running"
     else
@@ -49,7 +55,8 @@ function _status() {
         echo "pidfile: '${pidfile}'"
         echo "Monitoring '${updates_txt}' for changes"
     fi
-    if [[ -s "${updates_txt}" ]]
+    if
+        [[ -s "${updates_txt}" ]]
     then
         echo "Updates available:"
         cat "${updates_txt}"
@@ -57,11 +64,13 @@ function _status() {
 }
 
 function _start() {
-    if [[ -z $(_read_pidfile) ]]
+    if
+        [[ -z $(_read_pidfile) ]]
     then
         _write_pidfile
         trap "rm ${pidfile}; pkill -P ${mypid}" EXIT
-        while true
+        while
+            true
         do
             notify_user
             ${__inotifywait} -qq -e close_write ${updates_txt}
@@ -75,9 +84,24 @@ function _stop() {
 }
 
 case ${1:-status} in
-    start) _start ;;
-    stop) _stop ;;
-    status) _status ;;
-    help) echo HELP ;;
-    *) echo "ERROR '$1'" ; exit 1 ;;
+    start)
+        _start
+        ;;
+    stop)
+        _stop
+        ;;
+    status)
+        _status
+        ;;
+    restart)
+        _stop ||:
+        _start
+        ;;
+    help)
+        echo HELP
+        ;;
+    *)
+        echo "ERROR '$1'"
+        exit 1
+        ;;
 esac
