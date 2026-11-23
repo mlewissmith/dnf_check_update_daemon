@@ -2,7 +2,7 @@
 
 project(
   'dnf_check_update_daemon',
-  version: 'beta',
+  version: '0.1',
   default_options: [
     ## define options in file 'meson.options'
     ## expand options in 'configx' below
