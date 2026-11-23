@@ -9,89 +9,21 @@ mypid="$$"
 piddir="${XDG_RUNTIME_DIR}/@NAME@"
 pidfile="${piddir}/${DISPLAY}"
 
+__inotifywait=$(which inotifywait)
+__notify_send=$(which notify-send)
+
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
 
-
-function _debug() {
-    cat<<__EOF_DEBUG__
-================================================================================
-        EXAMPLE CONFIGURATION EXPANSION
-================================================================================
-
-PROJECT_NAME            '@PROJECT_NAME@'
-PROJECT_VERSION         '@PROJECT_VERSION@'
-
-PACKAGE_NAME            '@PACKAGE_NAME@'
-PACKAGE_VERSION         '@PACKAGE_VERSION@'
-PACKAGE_BUGREPORT       '@PACKAGE_BUGREPORT@'
-PACKAGE_URL             '@PACKAGE_URL@'
-PACKAGE_TARNAME         '@PACKAGE_TARNAME@'
-PACKAGE_STRING          '@PACKAGE_STRING@'
-PACKAGE_VARNAME         '@PACKAGE_VARNAME@'
-PACKAGE_SUMMARY         '@PACKAGE_SUMMARY@'
-PACKAGE_DESCRIPTION
-@PACKAGE_DESCRIPTION@
-
-NAME                    '@NAME@'
-VERSION                 '@VERSION@'
-PACKAGE                 '@PACKAGE@'
-
-
---------------------------------------------------------------------------------
-        Directories: meson standard
---------------------------------------------------------------------------------
-
-bindir                  '@bindir@'
-datadir                 '@datadir@'
-includedir              '@includedir@'
-infodir                 '@infodir@'
-libdir                  '@libdir@'
-libexecdir              '@libexecdir@'
-localedir               '@localedir@'
-localstatedir           '@localstatedir@'
-mandir                  '@mandir@'
-prefix                  '@prefix@'
-sbindir                 '@sbindir@'
-sharedstatedir          '@sharedstatedir@'
-sysconfdir              '@sysconfdir@'
-
-
---------------------------------------------------------------------------------
-        Directories: autoconf compatibility
---------------------------------------------------------------------------------
-
-datarootdir             '@datarootdir@'
-docdir                  '@docdir@'
-dvidir                  '@dvidir@'
-exec_prefix             '@exec_prefix@'
-htmldir                 '@htmldir@'
-oldincludedir           '@oldincludedir@'
-pdfdir                  '@pdfdir@'
-psdir                   '@psdir@'
-runstatedir             '@runstatedir@'
-pkgdatadir              '@pkgdatadir@'
-pkgincludedir           '@pkgincludedir@'
-pkglibdir               '@pkglibdir@'
-pkglibexecdir           '@pkglibexecdir@'
-pkglocalstatedir        '@pkglocalstatedir@'
-pkgsharedstatedir       '@pkgsharedstatedir@'
-
---------------------------------------------------------------------------------
-        OUR OPTIONS
---------------------------------------------------------------------------------
-
-packages_db             '@packages_db@'
-updates_txt             '@updates_txt@'
-systemd_unitdir         '@systemd_unitdir@'
-systemd_presetdir       '@systemd_presetdir@'
-with-systemd            '@with-systemd@'
-with-profile_d          '@with-profile_d@'
-with-user               '@with-user@'
-__EOF_DEBUG__
+function notify_user() {
+    if [[ -s "${updates_txt}" ]]
+    then
+        ${__notify_send} -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
+    fi
 }
 
+
 function _write_pidfile() {
-    mkdir -vp ${piddir}
+    mkdir -p ${piddir}
     ps -p ${mypid} -opid= -oargs= > ${pidfile}
 }
 
@@ -102,7 +34,7 @@ function _read_pidfile() {
         read _pid _args < ${pidfile}
         if [[ $(ps -p ${_pid} -oargs=) == ${_args} ]]
         then echo ${_pid}
-        else rm -v ${pidfile} >&2
+        else rm ${pidfile} >&2
         fi
     fi
 }
@@ -131,8 +63,8 @@ function _start() {
         trap "rm ${pidfile}; pkill -P ${mypid}" EXIT
         while true
         do
-            [[ -s "${updates_txt}" ]] && notify-send -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
-            inotifywait -qq -e close_write ${updates_txt}
+            notify_user
+            ${__inotifywait} -qq -e close_write ${updates_txt}
         done
     fi
 }
@@ -147,6 +79,5 @@ case ${1:-status} in
     stop) _stop ;;
     status) _status ;;
     help) echo HELP ;;
-    _debug) _debug ;;
     *) echo "ERROR '$1'" ; exit 1 ;;
 esac
