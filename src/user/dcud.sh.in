@@ -83,6 +83,34 @@ function _stop() {
     [[ -n ${_pid} ]] && kill ${_pid}
 }
 
+function _settings() {
+    local _autostart=
+    local xdg_autostart_dir="${XDG_CONFIG_HOME:-${HOME}/.config/autostart}"
+    [[ -d "${xdg_autostart_dir}" ]] || return
+    local _desktopfile="${xdg_autostart_dir}/@NAME@.desktop"
+    echo "Autostart '${myname}' on login?"
+    select _autostart in yes no
+    do
+        case $_autostart in
+            yes)
+cat <<EOF> ${_desktopfile}
+[Desktop Entry]
+Name=@NAME@
+Terminal=false
+Type=Application
+StartupNotify=false
+Exec=${myname} start
+EOF
+                break
+                ;;
+            no)
+                rm -fv "${_desktopfile}"
+                break
+                ;;
+        esac
+    done
+}
+
 case ${1:-status} in
     start)
         _start
@@ -96,6 +124,9 @@ case ${1:-status} in
     restart)
         _stop ||:
         _start
+        ;;
+    settings)
+        _settings
         ;;
     help)
         echo HELP
