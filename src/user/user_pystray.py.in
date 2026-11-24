@@ -13,7 +13,7 @@ icon_image = Image.new('RGB', (32,32), "cyan")
 
 def inotifywait():
     while True:
-        subprocess.run([__inotifywait,'-eclose_write',updates_txt])
+        subprocess.run([__inotifywait,'-qq','-eclose_write',updates_txt])
         subprocess.run(['cat',updates_txt])
 
 def menu_action(i, q):

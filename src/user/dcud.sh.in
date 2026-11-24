@@ -11,16 +11,10 @@ pidfile="${piddir}/${DISPLAY}"
 
 __inotifywait=$(which inotifywait)
 __notify_send=$(which notify-send)
+__python3=$(which python3)
+__user_pystray_py="@pkglibexecdir@/user_pystray.py"
 
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
-
-function notify_user() {
-    if
-        [[ -s "${updates_txt}" ]]
-    then
-        ${__notify_send} -u normal -t 5000 -i dialog-warning "Updates available:" "$(<${updates_txt})"
-    fi
-}
 
 
 function _write_pidfile() {
@@ -69,12 +63,9 @@ function _start() {
     then
         _write_pidfile
         trap "rm ${pidfile}; pkill -P ${mypid}" EXIT
-        while
-            true
-        do
-            notify_user
-            ${__inotifywait} -qq -e close_write ${updates_txt}
-        done
+        export DNF_CHECK_UPDATE_DAEMON_TXT=${updates_txt}
+        export __inotifywait __notify_send
+        $__python3 $__user_pystray_py
     fi
 }
 
