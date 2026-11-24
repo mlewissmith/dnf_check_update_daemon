@@ -9,17 +9,28 @@ import os
 updates_txt   = os.environ['@PACKAGE_VARNAME@_TXT']
 __inotifywait = os.environ['__inotifywait']
 
+alive = True
+inotify_pid = 0
+
 icon_image = Image.new('RGB', (32,32), "cyan")
 
 def inotifywait():
-    while True:
+    global inotify_pid
+    global alive
+    while alive:
         subprocess.run(['cat',updates_txt])
-        subprocess.run([__inotifywait,'-qq','-eclose_write',updates_txt])
+        inotify_pid = subprocess.Popen([__inotifywait,'-qq','-eclose_write',updates_txt])
+        inotify_pid.wait()
 
 def menu_action(i, q):
     print(q)
+    print(inotify_pid)
+    inotify_pid.terminate()
 
 def menu_action_stop(i,q):
+    global alive
+    alive = False
+    inotify_pid.terminate()
     i.stop()
 
 # default backend 'appindicator' does not support default action
