@@ -1,19 +1,20 @@
+## -*- python -*-
 import pystray
 from PIL import Image
 import threading
 import subprocess
+import os
 
-updates_txt="updates.txt"
+# updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
+updates_txt   = os.environ['@PACKAGE_VARNAME@_TXT']
+__inotifywait = os.environ['__inotifywait']
 
 icon_image = Image.new('RGB', (32,32), "cyan")
 
-def __inotifywait():
+def inotifywait():
     while True:
-        subprocess.run(['inotifywait','-eclose_write',updates_txt])
+        subprocess.run([__inotifywait,'-eclose_write',updates_txt])
         subprocess.run(['cat',updates_txt])
-
-def menu_action_start(i,q):
-    __inotifywait()
 
 def menu_action(i, q):
     print(q)
@@ -26,15 +27,15 @@ def menu_action_stop(i,q):
 systray_icon = pystray.Icon(
     "NAME", icon_image, "TITLE",
     menu=pystray.Menu(
-        pystray.MenuItem("start", menu_action_start),
+        pystray.MenuItem("start", menu_action),
         pystray.MenuItem("status", menu_action, default=True),
         pystray.MenuItem("settings", menu_action),
         pystray.MenuItem("stop", menu_action_stop),
     )
 )
 
-
-watch_thread = threading.Thread(target=__inotifywait, daemon=True)
+assert os.path.exists(updates_txt)
+watch_thread = threading.Thread(target=inotifywait, daemon=True)
 watch_thread.start()
 systray_icon.run()
 
