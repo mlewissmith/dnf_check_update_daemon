@@ -8,24 +8,24 @@ import signal
 import atexit
 
 updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
+icon_image = Image.new('RGB', (32,32), "cyan")
+
 __user_notifyd = "@pkglibexecdir@/user_notifyd.sh"
 __user_notifyd_pid = 0
 systray_icon = 0
 
-icon_image = Image.new('RGB', (32,32), "cyan")
-
 def atexit_handler():
     global __user_notifyd_pid
     __user_notifyd_pid.terminate()
-    print("(atexit)TERM", __user_notifyd_pid)
+    #print("(atexit)TERM", __user_notifyd_pid)
 
 def sigterm_handler(signum, frame):
     global __user_notifyd_pid
     __user_notifyd_pid.terminate()
-    print("sigterm(TERM)", __user_notifyd_pid)
+    #print("sigterm(TERM)", __user_notifyd_pid)
     global systray_icon
     systray_icon.stop()
-    print("sigterm(STOP)", systray_icon)
+    #print("sigterm(STOP)", systray_icon)
 
 def user_notifyd():
     global __user_notifyd_pid
