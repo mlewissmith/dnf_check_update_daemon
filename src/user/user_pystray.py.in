@@ -11,33 +11,37 @@ updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
 icon_image = Image.new('RGB', (32,32), "cyan")
 
 __user_notifyd = "@pkglibexecdir@/user_notifyd.sh"
-__user_notifyd_pid = 0
+user_notifyd_pid = 0
 systray_icon = 0
 
 def atexit_handler():
-    global __user_notifyd_pid
-    __user_notifyd_pid.terminate()
-    #print("(atexit)TERM", __user_notifyd_pid)
+    global user_notifyd_pid
+    if user_notifyd_pid:
+        user_notifyd_pid.terminate()
+        #print("(atexit)TERM", user_notifyd_pid)
 
 def sigterm_handler(signum, frame):
-    global __user_notifyd_pid
-    __user_notifyd_pid.terminate()
-    #print("sigterm(TERM)", __user_notifyd_pid)
+    global user_notifyd_pid
+    if user_notifyd_pid:
+        user_notifyd_pid.terminate()
+        #print("sigterm(TERM)", user_notifyd_pid)
     global systray_icon
-    systray_icon.stop()
-    #print("sigterm(STOP)", systray_icon)
+    if systray_icon:
+        systray_icon.stop()
+        #print("sigterm(STOP)", systray_icon)
 
 def user_notifyd():
-    global __user_notifyd_pid
-    __user_notifyd_pid = subprocess.Popen([__user_notifyd])
+    global user_notifyd_pid
+    user_notifyd_pid = subprocess.Popen([__user_notifyd])
     atexit.register(atexit_handler)
-    __user_notifyd_pid.wait()
+    user_notifyd_pid.wait()
 
 def menu_action(i, q):
     print(q)
 
 def menu_action_stop(i,q):
-    __user_notifyd_pid.terminate()
+    if user_notifyd_pid:
+        user_notifyd_pid.terminate()
     i.stop()
 
 # default backend 'appindicator' does not support default action

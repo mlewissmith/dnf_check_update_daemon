@@ -9,8 +9,6 @@ mypid="$$"
 piddir="${XDG_RUNTIME_DIR}/@NAME@"
 pidfile="${piddir}/${DISPLAY}"
 
-__inotifywait=$(which inotifywait)
-__notify_send=$(which notify-send)
 __python3=$(which python3)
 __user_pystray_py="@pkglibexecdir@/user_pystray.py"
 
@@ -64,7 +62,6 @@ function _start() {
         _write_pidfile
         trap "rm ${pidfile}; pkill -P ${mypid}" EXIT
         export DNF_CHECK_UPDATE_DAEMON_TXT=${updates_txt}
-        export __inotifywait __notify_send
         $__python3 $__user_pystray_py
     fi
 }
