@@ -4,33 +4,29 @@ from PIL import Image
 import threading
 import subprocess
 import os
+import atexit
 
-# updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
-updates_txt   = os.environ['@PACKAGE_VARNAME@_TXT']
-__inotifywait = os.environ['__inotifywait']
-
-alive = True
-inotify_pid = 0
+updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
+__user_notifyd = "@pkglibexecdir@/user_notifyd.sh"
+__user_notifyd_pid = 0
 
 icon_image = Image.new('RGB', (32,32), "cyan")
 
-def inotifywait():
-    global inotify_pid
-    global alive
-    while alive:
-        subprocess.run(['cat',updates_txt])
-        inotify_pid = subprocess.Popen([__inotifywait,'-qq','-eclose_write',updates_txt])
-        inotify_pid.wait()
+def kill_user_notifyd():
+    global __user_notifyd_pid
+    __user_notifyd_pid.terminate()
+
+def user_notifyd():
+    global __user_notifyd_pid
+    __user_notifyd_pid = subprocess.Popen([__user_notifyd])
+    atexit.register(kill_user_notifyd)
+    __user_notifyd_pid.wait()
 
 def menu_action(i, q):
     print(q)
-    print(inotify_pid)
-    inotify_pid.terminate()
 
 def menu_action_stop(i,q):
-    global alive
-    alive = False
-    inotify_pid.terminate()
+    # __user_notifyd_pid.terminate()
     i.stop()
 
 # default backend 'appindicator' does not support default action
@@ -46,8 +42,8 @@ systray_icon = pystray.Icon(
 )
 
 assert os.path.exists(updates_txt)
-watch_thread = threading.Thread(target=inotifywait, daemon=True)
-watch_thread.start()
+user_notifyd_thread = threading.Thread(target=user_notifyd, daemon=True)
+user_notifyd_thread.start()
 systray_icon.run()
 
 
