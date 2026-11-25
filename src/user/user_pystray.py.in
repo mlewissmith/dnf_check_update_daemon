@@ -4,29 +4,40 @@ from PIL import Image
 import threading
 import subprocess
 import os
+import signal
 import atexit
 
 updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
 __user_notifyd = "@pkglibexecdir@/user_notifyd.sh"
 __user_notifyd_pid = 0
+systray_icon = 0
 
 icon_image = Image.new('RGB', (32,32), "cyan")
 
-def kill_user_notifyd():
+def atexit_handler():
     global __user_notifyd_pid
     __user_notifyd_pid.terminate()
+    print("(atexit)TERM", __user_notifyd_pid)
+
+def sigterm_handler(signum, frame):
+    global __user_notifyd_pid
+    __user_notifyd_pid.terminate()
+    print("sigterm(TERM)", __user_notifyd_pid)
+    global systray_icon
+    systray_icon.stop()
+    print("sigterm(STOP)", systray_icon)
 
 def user_notifyd():
     global __user_notifyd_pid
     __user_notifyd_pid = subprocess.Popen([__user_notifyd])
-    atexit.register(kill_user_notifyd)
+    atexit.register(atexit_handler)
     __user_notifyd_pid.wait()
 
 def menu_action(i, q):
     print(q)
 
 def menu_action_stop(i,q):
-    # __user_notifyd_pid.terminate()
+    __user_notifyd_pid.terminate()
     i.stop()
 
 # default backend 'appindicator' does not support default action
@@ -44,6 +55,7 @@ systray_icon = pystray.Icon(
 assert os.path.exists(updates_txt)
 user_notifyd_thread = threading.Thread(target=user_notifyd, daemon=True)
 user_notifyd_thread.start()
+signal.signal(signal.SIGTERM, sigterm_handler)
 systray_icon.run()
 
 
