@@ -11,7 +11,6 @@ configure_file(
   install_tag   : 'user',
 )
 
-
 configure_file(
   input         : 'user_notifyd.sh.in',
   output        : 'user_notifyd.sh',
@@ -32,3 +31,12 @@ configure_file(
   install_tag   : 'user',
 )
 
+configure_file(
+  input         : 'dcud.desktop.in',
+  output        : 'dcud.desktop',
+  configuration : configx,
+  install       : true,
+  install_dir   : configx.get('datadir')/'applications',
+  install_mode  : 'rw-r--r--',
+  install_tag   : 'user',
+)

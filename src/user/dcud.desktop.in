@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=@PACKAGE_NAME@
+Comment=@PACKAGE_SUMMARY@
+Exec=dcud.sh start
+Terminal=false
+Type=Application
+Categories=Utility
+StartupNotify=false
