@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+import pystray
+from PIL import Image
+import os
+import subprocess
+
+updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
+assert os.path.exists(updates_txt)
+
+icon_image = Image.new('RGB', (32,32), "cyan")
+
+def _status(i,q):
+    subprocess.run(['cat', updates_txt])
+
+def _stop(i,q):
+    i.stop()
+
+# default backend 'appindicator' does not support default action
+# gtk backend supports default action (envvar PYSTRAY_BACKEND=gtk)
+pystray_icon = pystray.Icon(
+    "NAME",
+    icon_image,
+    "TITLE",
+    menu=pystray.Menu(
+        pystray.MenuItem("status",
+                         _status,
+                         default=True),
+        pystray.MenuItem("stop",
+                         _stop),
+    )
+)
+
+pystray_icon.run()
+
+
+
+### some ideas from
+### https://stackoverflow.com/questions/66286498/can-should-i-use-asyncio-instead-of-threading-with-pystray
