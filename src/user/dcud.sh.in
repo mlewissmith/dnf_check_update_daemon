@@ -10,8 +10,8 @@ piddir="${XDG_RUNTIME_DIR}/@PACKAGE_NAME@"
 pidfile="${piddir}/${DISPLAY}"
 
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
-__user_pystray_py="@pkglibexecdir@/user_pystray.py"
-__user_notifyd_sh="@pkglibexecdir@/user_notifyd.sh"
+__user_pystray_py="@__user_pystray_py@"
+__user_notifyd_sh="@__user_notifyd_sh@"
 declare -A pidof
 pidof[pystray]=0
 pidof[notifyd]=0
