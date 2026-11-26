@@ -6,7 +6,7 @@ myname="$(basename ${me})"
 mydir="$(dirname ${me})"
 mypid="$$"
 
-piddir="${XDG_RUNTIME_DIR}/@NAME@"
+piddir="${XDG_RUNTIME_DIR}/@PACKAGE_NAME@"
 pidfile="${piddir}/${DISPLAY}"
 
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
@@ -88,7 +88,7 @@ function _settings() {
     local _autostart=
     local xdg_autostart_dir="${XDG_CONFIG_HOME:-${HOME}/.config/autostart}"
     [[ -d "${xdg_autostart_dir}" ]] || return
-    local _desktopfile="${xdg_autostart_dir}/@NAME@.desktop"
+    local _desktopfile="${xdg_autostart_dir}/@PACKAGE_NAME@.desktop"
     echo "Autostart '${myname}' on login?"
     select _autostart in yes no
     do
@@ -96,7 +96,7 @@ function _settings() {
             yes)
 cat <<EOF> ${_desktopfile}
 [Desktop Entry]
-Name=@NAME@
+Name=@PACKAGE_NAME@
 Terminal=false
 Type=Application
 StartupNotify=false
