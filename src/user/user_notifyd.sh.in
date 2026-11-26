@@ -7,12 +7,9 @@ updates_txt=${@PACKAGE_VARNAME@_TXT:-"@updates_txt@"}
 
 while [[ -e ${updates_txt} ]]
 do
-    if [[ -s ${updates_txt} ]]
-    then
-        cat ${updates_txt}
+    [[ -s ${updates_txt} ]] &&
         $__notify_send -u normal -t 5000 -i dialog-warning -- "Updates available:" "$(<${updates_txt})"
-    fi
     $__inotifywait -qq -eclose_write ${updates_txt} &
     trap "kill $!" EXIT
-    wait $! ||:
+    wait $!
 done

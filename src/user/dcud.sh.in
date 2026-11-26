@@ -43,16 +43,14 @@ function _status() {
     if
         [[ -z ${_pid} ]]
     then
-        echo "User script '${myname}' is not running"
+        echo "# '${myname}' is not running"
     else
-        echo "User script '${myname}' is running with pid [${_pid}]"
-        echo "pidfile: '${pidfile}'"
-        echo "Monitoring '${updates_txt}' for changes"
+        echo "# '${myname}' is running with pid [${_pid}]"
     fi
     if
         [[ -s "${updates_txt}" ]]
     then
-        echo "Updates available:"
+        echo "# Updates available:"
         cat "${updates_txt}"
     fi
 }
@@ -132,7 +130,7 @@ case ${1:-status} in
         _settings
         ;;
     help)
-        echo HELP
+        echo "# @PACKAGE_NAME@ @PACKAGE_VERSION@"
         ;;
     *)
         echo "ERROR '$1'"
