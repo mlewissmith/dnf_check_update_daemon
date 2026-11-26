@@ -6,8 +6,8 @@ fs = import('fs')
 configx_user = configuration_data()
 configx_user.merge_from(configx)
 configx_user.set('__dcud_sh',          configx_user.get('bindir')/'dcud.sh')
-configx_user.set('__user_notifyd_sh',  configx_user.get('libexecdir')/'user_notifyd.sh')
-configx_user.set('__user_pystray_py',  configx_user.get('libexecdir')/'user_pystray.py')
+configx_user.set('__user_notifyd_sh',  configx_user.get('pkglibexecdir')/'user_notifyd.sh')
+configx_user.set('__user_pystray_py',  configx_user.get('pkglibexecdir')/'user_pystray.py')
 configx_user.set('_dcud_desktop',      configx_user.get('datadir')/'applications'/'dcud.desktop')
 
 
