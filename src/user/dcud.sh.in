@@ -9,10 +9,12 @@ mypid="$$"
 piddir="${XDG_RUNTIME_DIR}/@NAME@"
 pidfile="${piddir}/${DISPLAY}"
 
-__python3=$(which python3)
-__user_pystray_py="@pkglibexecdir@/user_pystray.py"
-
 updates_txt=${DNF_CHECK_UPDATE_DAEMON_TXT:-@updates_txt@}
+__user_pystray_py="@pkglibexecdir@/user_pystray.py"
+__user_notifyd_sh="@pkglibexecdir@/user_notifyd.sh"
+declare -A pidof
+pidof[pystray]=0
+pidof[notifyd]=0
 
 
 function _write_pidfile() {
@@ -61,8 +63,21 @@ function _start() {
     then
         _write_pidfile
         trap "rm ${pidfile}; pkill -P ${mypid}" EXIT
-        export DNF_CHECK_UPDATE_DAEMON_TXT=${updates_txt}
-        $__python3 $__user_pystray_py
+
+        $__user_notifyd_sh &
+        pidof[notifyd]=$!
+
+        $__user_pystray_py &
+        pidof[pystray]=$!
+
+        while true
+        do
+            for p in "${pidof[@]}"
+            do
+                kill -0 $p || exit 1
+            done
+            sleep 1
+        done
     fi
 }
 
@@ -111,7 +126,7 @@ case ${1:-status} in
         ;;
     restart)
         _stop ||:
-        _start
+        exec $0 start
         ;;
     settings)
         _settings

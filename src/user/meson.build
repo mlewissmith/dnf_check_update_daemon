@@ -28,7 +28,7 @@ configure_file(
   configuration : configx,
   install       : true,
   install_dir   : configx.get('pkglibexecdir'),
-  install_mode  : 'rw-r--r--',
+  install_mode  : 'rwxr-xr-x',
   install_tag   : 'user',
 )
 

@@ -1,66 +1,36 @@
-## -*- python -*-
+#!/usr/bin/env python3
 import pystray
 from PIL import Image
-import threading
-import subprocess
 import os
-import signal
-import atexit
+import subprocess
 
 updates_txt = os.getenv('@PACKAGE_VARNAME@_TXT', '@updates_txt@')
+assert os.path.exists(updates_txt)
+
 icon_image = Image.new('RGB', (32,32), "cyan")
 
-__user_notifyd = "@pkglibexecdir@/user_notifyd.sh"
-user_notifyd_pid = 0
-systray_icon = 0
+def _status(i,q):
+    subprocess.run(['cat', updates_txt])
 
-def atexit_handler():
-    global user_notifyd_pid
-    if user_notifyd_pid:
-        user_notifyd_pid.terminate()
-        #print("(atexit)TERM", user_notifyd_pid)
-
-def sigterm_handler(signum, frame):
-    global user_notifyd_pid
-    if user_notifyd_pid:
-        user_notifyd_pid.terminate()
-        #print("sigterm(TERM)", user_notifyd_pid)
-    global systray_icon
-    if systray_icon:
-        systray_icon.stop()
-        #print("sigterm(STOP)", systray_icon)
-
-def user_notifyd():
-    global user_notifyd_pid
-    user_notifyd_pid = subprocess.Popen([__user_notifyd])
-    atexit.register(atexit_handler)
-    user_notifyd_pid.wait()
-
-def menu_action(i, q):
-    print(q)
-
-def menu_action_stop(i,q):
-    if user_notifyd_pid:
-        user_notifyd_pid.terminate()
+def _stop(i,q):
     i.stop()
 
 # default backend 'appindicator' does not support default action
 # gtk backend supports default action (envvar PYSTRAY_BACKEND=gtk)
-systray_icon = pystray.Icon(
-    "NAME", icon_image, "TITLE",
+pystray_icon = pystray.Icon(
+    "NAME",
+    icon_image,
+    "TITLE",
     menu=pystray.Menu(
-        pystray.MenuItem("start", menu_action),
-        pystray.MenuItem("status", menu_action, default=True),
-        pystray.MenuItem("settings", menu_action),
-        pystray.MenuItem("stop", menu_action_stop),
+        pystray.MenuItem("status",
+                         _status,
+                         default=True),
+        pystray.MenuItem("stop",
+                         _stop),
     )
 )
 
-assert os.path.exists(updates_txt)
-user_notifyd_thread = threading.Thread(target=user_notifyd, daemon=True)
-user_notifyd_thread.start()
-signal.signal(signal.SIGTERM, sigterm_handler)
-systray_icon.run()
+pystray_icon.run()
 
 
 
